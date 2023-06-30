@@ -25,14 +25,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector3 cameraRotate{ 0.26f, 0.0f, 0.0f };
 
 	// 四角形
-	AABB aabb1{
+	AABB aabb{
 		-0.5f, -0.5f, -0.25f,
 		0.0f, 0.0f, 0.0f };
 	uint32_t color = WHITE;
 
-	AABB aabb2{
-		0.2f, 0.2f, -0.25f,
-		1.0f, 1.0f, 1.0f
+	// 球
+	Sphere sphere{
+		{1.0f, 1.0f, 1.0f},
+		1.0f
 	};
 
 	// ウィンドウの×ボタンが押されるまでループ
@@ -65,7 +66,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		Matrix4x4 viewPortmatrix = MyMath::MakeViewPortMatrix(0, 0, float(kWindowWidth), float(kWindowHeight), 0.0f, 1.0f);
 
 		// 立方体同士の当たり判定をとる
-		if (MyCollision::IsCollision(aabb1, aabb2)) {
+		if (MyCollision::IsCollision(aabb, sphere)) {
 			// 色を変える
 			color = RED;
 		}
@@ -75,23 +76,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 
 		// 頂点が入れ替わらないように
-		aabb1.min.x = (std::min)(aabb1.min.x, aabb1.max.x);
-		aabb1.max.x = (std::max)(aabb1.min.x, aabb1.max.x);
+		aabb.min.x = (std::min)(aabb.min.x, aabb.max.x);
+		aabb.max.x = (std::max)(aabb.min.x, aabb.max.x);
 
-		aabb1.min.y = (std::min)(aabb1.min.y, aabb1.max.y);
-		aabb1.max.y = (std::max)(aabb1.min.y, aabb1.max.y);
+		aabb.min.y = (std::min)(aabb.min.y, aabb.max.y);
+		aabb.max.y = (std::max)(aabb.min.y, aabb.max.y);
 
-		aabb1.min.z = (std::min)(aabb1.min.z, aabb1.max.z);
-		aabb1.max.z = (std::max)(aabb1.min.z, aabb1.max.z);
-
-		aabb2.min.x = (std::min)(aabb2.min.x, aabb2.max.x);
-		aabb2.max.x = (std::max)(aabb2.min.x, aabb2.max.x);
-
-		aabb2.min.y = (std::min)(aabb2.min.y, aabb2.max.y);
-		aabb2.max.y = (std::max)(aabb2.min.y, aabb2.max.y);
-
-		aabb2.min.z = (std::min)(aabb2.min.z, aabb2.max.z);
-		aabb2.max.z = (std::max)(aabb2.min.z, aabb2.max.z);
+		aabb.min.z = (std::min)(aabb.min.z, aabb.max.z);
+		aabb.max.z = (std::max)(aabb.min.z, aabb.max.z);
 
 		///
 		/// ↑更新処理ここまで
@@ -105,8 +97,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		MyDebug::DrawGrid(worldViewProjectionMatrix, viewPortmatrix);
 
 		// AABBを描画する
-		MyDebug::DrawAABB(aabb1, worldViewProjectionMatrix, viewPortmatrix, color);
-		MyDebug::DrawAABB(aabb2, worldViewProjectionMatrix, viewPortmatrix, WHITE);
+		MyDebug::DrawAABB(aabb, worldViewProjectionMatrix, viewPortmatrix, color);
+		// 球を描画する
+		MyDebug::DrawSphere(sphere, worldViewProjectionMatrix, viewPortmatrix, WHITE);
 
 		///
 		/// ↑描画処理ここまで
@@ -125,14 +118,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		ImGui::DragFloat3("cameraRotate", &cameraRotate.x, 0.01f);
 
 		// AABBの最小値をいじる
-		ImGui::DragFloat3("aabb1.min", &aabb1.min.x, 0.01f);
+		ImGui::DragFloat3("aabb1.min", &aabb.min.x, 0.01f);
 		// AABBの最大値をいじる
-		ImGui::DragFloat3("aabb1.max", &aabb1.max.x, 0.01f);
+		ImGui::DragFloat3("aabb1.max", &aabb.max.x, 0.01f);
 
-		// AABBの最小値をいじる
-		ImGui::DragFloat3("aabb2.min", &aabb2.min.x, 0.01f);
-		// AABBの最大値をいじる
-		ImGui::DragFloat3("aabb2.max", &aabb2.max.x, 0.01f);
+		// 球の中心座標をいじる
+		ImGui::DragFloat3("sphere.center", &sphere.center.x, 0.01f);
+		// 球の半径をいじる
+		ImGui::DragFloat("sphere.radius", &sphere.radius, 0.01f);
 
 		ImGui::End();
 

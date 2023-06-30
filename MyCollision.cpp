@@ -223,3 +223,31 @@ bool MyCollision::IsCollision(const AABB& aabb1, const AABB& aabb2) {
 	return false;
 
 }
+
+/// <summary>
+/// 立方体と球の当たり判定をとる関数
+/// </summary>
+/// <param name="aabb1">立方体</param>
+/// <param name="sphere">球</param>
+/// <returns>衝突しているか</returns>
+bool MyCollision::IsCollision(const AABB& aabb, const Sphere& sphere) {
+
+	// 最近頂点を求める
+	Vector3 closetPoint{
+		std::clamp(sphere.center.x, aabb.min.x, aabb.max.x),
+		std::clamp(sphere.center.y, aabb.min.y, aabb.max.y),
+		std::clamp(sphere.center.z, aabb.min.z, aabb.max.z)
+	};
+
+	// 最近頂点と球の中心との距離を求める
+	float distance = MyMath::Length(closetPoint - sphere.center);
+	// 距離が半径よりも小さければ衝突
+	if (distance <= sphere.radius) {
+		// 衝突
+		return true;
+	}
+
+	// 衝突していない
+	return false;
+
+}

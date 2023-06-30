@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include<iostream>
+#include <algorithm>
 #include "MyConst.h"
 #include "MyStruct.h"
 #include "MyMath.h"
@@ -65,6 +67,14 @@ public:
 	/// <param name="aabb2"></param>
 	/// <returns></returns>
 	static bool IsCollision(const AABB& aabb1, const AABB& aabb2);
+
+	/// <summary>
+	/// 立方体と球の当たり判定をとる関数
+	/// </summary>
+	/// <param name="aabb1">立方体</param>
+	/// <param name="sphere">球</param>
+	/// <returns>衝突しているか</returns>
+	static bool IsCollision(const AABB& aabb1, const Sphere& sphere);
 
 };
 
